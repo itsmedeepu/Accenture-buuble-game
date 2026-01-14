@@ -1,0 +1,332 @@
+.game-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 800px;
+  padding: 20px;
+  margin: 0 auto;
+}
+
+.game-icon {
+  font-size: 5rem;
+  margin: 2rem;
+}
+
+.game-instructions {
+  max-width: 400px;
+  margin-bottom: 2rem;
+  color: #ccc;
+  text-align: center;
+  line-height: 1.5;
+}
+
+.start-button {
+  font-size: 1.5rem;
+  padding: 15px 40px;
+  border-radius: 50px;
+  background: #646cff;
+  color: white;
+  border: none;
+  font-weight: bold;
+  box-shadow: 0 4px 15px rgba(100, 108, 255, 0.4);
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.start-button:hover {
+  transform: scale(1.05);
+  box-shadow: 0 6px 20px rgba(100, 108, 255, 0.6);
+}
+
+.stop-button {
+  font-size: 1rem;
+  padding: 10px 20px;
+  border-radius: 50px;
+  background: #F44336;
+  color: white;
+  border: none;
+  font-weight: bold;
+  box-shadow: 0 4px 10px rgba(244, 67, 54, 0.4);
+  cursor: pointer;
+  transition: transform 0.2s;
+  height: fit-content;
+}
+
+.stop-button:hover {
+  transform: scale(1.05);
+  background: #d32f2f;
+}
+
+.status-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  margin-bottom: 20px;
+}
+
+.score-board {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  font-size: 1rem;
+  font-weight: bold;
+  background: rgba(0,0,0,0.3);
+  padding: 15px 20px;
+  border-radius: 20px;
+  border: 1px solid rgba(255,255,255,0.1);
+  min-width: 150px;
+}
+
+.game-box {
+  background: rgba(255, 255, 255, 0.05);
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  border-radius: 30px;
+  padding: 40px;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  box-sizing: border-box;
+}
+
+.bubbles-container {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 20px;
+  margin: 40px 0;
+  min-height: 200px;
+}
+
+/* Bubble Styles */
+.bubble {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.1);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  margin: 20px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  position: relative;
+  animation: float 6s ease-in-out infinite;
+}
+
+.bubble:nth-child(1) { animation-delay: 0s; }
+.bubble:nth-child(2) { animation-delay: 2s; }
+.bubble:nth-child(3) { animation-delay: 4s; }
+
+.bubble.selected {
+  background: rgba(100, 108, 255, 0.3);
+  border-color: #646cff;
+  box-shadow: 0 0 20px #646cff;
+  transform: scale(1.1);
+}
+
+.bubble.correct {
+  background: rgba(76, 175, 80, 0.3);
+  border-color: #4CAF50;
+  box-shadow: 0 0 20px #4CAF50;
+}
+
+.bubble.wrong {
+  background: rgba(244, 67, 54, 0.3);
+  border-color: #F44336;
+  box-shadow: 0 0 20px #F44336;
+}
+
+.bubble-text {
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+.bubble-order-badge {
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 0.8rem;
+  font-weight: bold;
+  color: white;
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.bubble.selected .bubble-order-badge { background: #646cff; }
+.bubble.correct .bubble-order-badge { background: #4CAF50; }
+.bubble.wrong .bubble-order-badge { background: #F44336; }
+
+/* Overlay Styles */
+.overlay-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(5px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 100;
+  animation: fadeIn 0.3s;
+}
+
+.overlay-content {
+  background: #1e1e1e;
+  padding: 2rem;
+  border-radius: 20px;
+  text-align: center;
+  border: 1px solid rgba(255,255,255,0.1);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+  max-width: 90%;
+  width: 400px;
+}
+
+.overlay-title {
+  font-size: 2.5rem;
+  margin-bottom: 0.5rem;
+  color: white;
+}
+
+.overlay-title.error { color: #F44336; }
+.overlay-title.success { color: #4CAF50; }
+
+.overlay-message {
+  font-size: 1.2rem;
+  margin-bottom: 1rem;
+  color: #ccc;
+}
+
+.overlay-score {
+  font-size: 2rem;
+  font-weight: bold;
+  margin-bottom: 2rem;
+}
+
+.overlay-score span { color: #646cff; }
+
+.overlay-button {
+  font-size: 1.2rem;
+  padding: 12px 30px;
+  background: #646cff;
+  color: white;
+  border: none;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: transform 0.2s, background 0.2s;
+  font-weight: bold;
+}
+
+.overlay-button:hover {
+  transform: scale(1.05);
+}
+
+
+@keyframes float {
+  0% { transform: translateY(0px) scale(1); }
+  50% { transform: translateY(-20px) scale(1.02); }
+  100% { transform: translateY(0px) scale(1); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes shake {
+  10%, 90% { transform: translate3d(-1px, 0, 0); }
+  20%, 80% { transform: translate3d(2px, 0, 0); }
+  30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
+  40%, 60% { transform: translate3d(4px, 0, 0); }
+}
+
+.shake {
+  animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both;
+}
+
+/* MEDIA QUERIES */
+@media (max-width: 600px) {
+  .game-container {
+    padding: 10px;
+    max-width: 100vw;
+  }
+  
+  h1 {
+    font-size: 2.2rem;
+  }
+  
+  .game-icon {
+    font-size: 3rem;
+    margin: 1rem;
+  }
+  
+  .game-instructions {
+    font-size: 0.9rem;
+  }
+  
+  .status-bar {
+    flex-direction: column-reverse;
+    gap: 15px;
+  }
+  
+  .score-board {
+    flex-direction: row;
+    width: 100%;
+    justify-content: space-between;
+    padding: 10px 15px;
+  }
+  
+  .game-box {
+    padding: 20px 0;
+  }
+  
+  .bubbles-container {
+    gap: 10px;
+    margin: 10px 0;
+  }
+  
+  .bubble {
+    width: 90px;
+    height: 90px;
+    margin: 10px;
+  }
+  
+  .bubble-text {
+    font-size: 1.2rem;
+  }
+  
+  .start-button {
+    font-size: 1.2rem;
+    padding: 12px 30px;
+  }
+  
+  /* Overlay overrides */
+  .overlay-content {
+    padding: 1.5rem;
+    width: 90%;
+  }
+  .overlay-title {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+  }
+  .overlay-score {
+    font-size: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+  .overlay-button {
+    font-size: 1rem;
+    padding: 10px 25px;
+  }
+}
