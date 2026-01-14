@@ -330,3 +330,29 @@
     padding: 10px 25px;
   }
 }
+
+/* Footer Styles */
+.main-footer, .game-footer {
+  margin-top: 2rem;
+  color: #888;
+  font-size: 0.9rem;
+  text-align: center;
+  padding: 1rem;
+  width: 100%;
+}
+
+.main-footer a, .game-footer a {
+  color: #646cff;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.main-footer a:hover, .game-footer a:hover {
+  text-decoration: underline;
+}
+
+.game-footer {
+    margin-top: auto; /* Push to bottom if flex container has height */
+    position: relative;
+    z-index: 10;
+}

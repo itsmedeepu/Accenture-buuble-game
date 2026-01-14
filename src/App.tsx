@@ -1,9 +1,11 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import './App.css';
 import { generateEquations, type Equation } from './gameLogic';
 import Bubble from './components/Bubble';
 import Timer from './components/Timer';
 import Overlay from './components/Overlay';
+import { driver } from "driver.js";
+import "driver.js/dist/driver.css";
 
 function App() {
   const [isPlaying, setIsPlaying] = useState(false);
@@ -15,6 +17,9 @@ function App() {
   const [gameOver, setGameOver] = useState(false);
   const [wrongAttempts, setWrongAttempts] = useState(0);
   const [feedbackStatus, setFeedbackStatus] = useState<'neutral' | 'correct' | 'wrong'>('neutral');
+  const [isTourActive, setIsTourActive] = useState(false);
+  
+  const driverObj = useRef<any>(null);
 
   // Start new level
   const startLevel = useCallback((currentLevel: number) => {
@@ -31,6 +36,52 @@ function App() {
     setLevel(1);
     setWrongAttempts(0);
     startLevel(1);
+    
+    // Check for first time user
+    const hasSeenTour = localStorage.getItem('hasSeenTour');
+    console.log('hasSeenTour:', hasSeenTour); // DEBUG
+    if (!hasSeenTour) {
+        console.log('Setting isTourActive to true'); // DEBUG
+        setIsTourActive(true);
+    }
+  };
+
+  useEffect(() => {
+    console.log('Tour Effect Triggered. isTourActive:', isTourActive, 'isPlaying:', isPlaying); // DEBUG
+      if (isTourActive && isPlaying) {
+          // simple timeout to ensure DOM elements are rendered
+          const timer = setTimeout(() => {
+              console.log('Starting Tour Now'); // DEBUG
+              startTour();
+          }, 500); // Increased timeout slightly
+          return () => clearTimeout(timer);
+      }
+  }, [isTourActive, isPlaying]);
+
+  const startTour = () => {
+      console.log('Initializing driver.js'); // DEBUG
+      driverObj.current = driver({
+          showProgress: true,
+          steps: [
+              { element: '.status-bar', popover: { title: 'Game Info', description: 'Here you can see your current Level, Score, and Missed attempts.' } },
+              { element: '.timer-container', popover: { title: 'Timer', description: 'You have limited time to solve each level! The game moves fast.' } },
+              { element: '.bubbles-container', popover: { title: 'Bubbles', description: 'Select 3 bubbles whose equations evaluate to numbers in INCREASING order. (e.g., 2, 5, 9)' } },
+              { element: '.bubbles-container', popover: { title: 'Selection', description: 'Tap to select. Tap again to DESELECT if you made a mistake. You must clear the board!' } },
+          ],
+          onDestroyStarted: () => {
+              if (!driverObj.current.hasNextStep() || confirm("Are you sure you want to skip the tour?")) {
+                  driverObj.current.destroy();
+                  endTour();
+              }
+          },
+      });
+      console.log('Calling driver.drive()'); // DEBUG
+      driverObj.current.drive();
+  };
+
+  const endTour = () => {
+      setIsTourActive(false);
+      localStorage.setItem('hasSeenTour', 'true');
   };
 
   const handleTimeUp = () => {
@@ -47,7 +98,7 @@ function App() {
 
   // Timer logic
   useEffect(() => {
-    if (!isPlaying || gameOver) return;
+    if (!isPlaying || gameOver || isTourActive) return;
 
     const timer = setInterval(() => {
       setTimeLeft((prev) => {
@@ -62,11 +113,11 @@ function App() {
     }, 100);
 
     return () => clearInterval(timer);
-  }, [isPlaying, gameOver, level, equations]); // added deps to restart timer correctly
+  }, [isPlaying, gameOver, level, equations, isTourActive]);
 
   // Handle bubble click
   const handleBubbleClick = (id: string) => {
-    if (gameOver || feedbackStatus !== 'neutral') return;
+    if (gameOver || feedbackStatus !== 'neutral' || isTourActive) return;
 
     if (selectedIds.includes(id)) {
         // Unselect logic
@@ -124,6 +175,9 @@ function App() {
         >
           Start Game
         </button>
+        <footer className="main-footer">
+            Designed by Deepak | <a href="https://github.com/itsmedeepu" target="_blank" rel="noopener noreferrer">Github</a>
+        </footer>
       </div>
     );
   }
@@ -137,7 +191,9 @@ function App() {
             <div style={{ color: '#F44336' }}>Missed: {wrongAttempts}</div>
         </div>
         <button className="stop-button" onClick={handleStopGame}>Stop</button>
-        <Timer timeLeft={timeLeft} totalTime={15} />
+        <div className="timer-container">
+            <Timer timeLeft={timeLeft} totalTime={15} />
+        </div>
       </div>
 
       <div className={`game-box ${feedbackStatus === 'wrong' ? 'shake' : ''}`}>
@@ -169,6 +225,19 @@ function App() {
           type="neutral"
         />
       )}
+      
+      <footer className="game-footer">
+        Designed by Deepak | <a href="https://github.com/itsmedeepu" target="_blank" rel="noopener noreferrer">Github</a>
+        <button 
+            onClick={() => {
+                localStorage.removeItem('hasSeenTour');
+                setIsTourActive(true);
+            }}
+            style={{ marginLeft: '10px', background: 'none', border: '1px solid #666', color: '#666', borderRadius: '4px', cursor: 'pointer', fontSize: '0.7rem' }}
+        >
+            Reset Tour
+        </button>
+      </footer>
     </div>
   );
 }
