@@ -150,7 +150,7 @@ function App() {
       }, 1000);
     } else {
       setFeedbackStatus('wrong');
-      setWrongAttempts(prev => prev + 1);
+      // setWrongAttempts(prev => prev + 1); // Removed as per request: only count unattempted/time-outs
       setTimeout(() => {
         // Reset status to allow retry, don't skip level
         setFeedbackStatus('neutral');

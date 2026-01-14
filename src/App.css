@@ -304,7 +304,9 @@
   }
   
   .bubble-text {
-    font-size: 1.2rem;
+    font-size: 0.9rem;
+    padding: 0 5px; /* Add some padding to prevent touching edges */
+    text-align: center;
   }
   
   .start-button {
